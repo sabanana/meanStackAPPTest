@@ -1,8 +1,10 @@
+//
 var express = require('express');	// add express to app
 var app = express();
 var path = require('path');
+var bodyParser = require('body-parser');
 
-var routes = require('./routes');
+var routes = require('./api/routes');
 
 app.set('port', 3000);	// set port
 
@@ -15,6 +17,9 @@ app.use(function(req, res, next) {
 // build static html homepage
 app.use(express.static(path.join(__dirname, 'public')));
 
+// user body-parser middleware to parser HTML form data in req.body
+// 
+app.use(bodyParser.urlencoded({ extended : false }));
 
 app.use('/api', routes);
 
