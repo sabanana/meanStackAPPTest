@@ -1,6 +1,6 @@
-// because it is a json file, we can just require() it
-// Or, we have to require("file") and then open and read that file asyncly.
-var hotelData = require("../data/hotel-data.json");
+// // because it is a json file, we can just require() it
+// // Or, we have to require("file") and then open and read that file asyncly.
+// var hotelData = require("../data/hotel-data.json");
 
 var dbconn = require('../data/dbconnection.js');
 var ObjectId = require('mongodb').ObjectId;
@@ -70,12 +70,29 @@ module.exports.hotelsGetOne = function(req, res) {
 module.exports.hotelsAddOne = function(req, res) {
 	// get the db from dbconnection
 	var db = dbconn.get();
+	var collection = db.collection("hotels");
+
+	var newHotel;	// placeholder for new doc
 
 	console.log("Get db");
 
 	console.log("POST new hotel");
-	console.log(req.body);
-	res
-		.status(200)
-		.json(req.body);
+
+	// check if the request is in correct form
+	if (req.body && req.body.name && req.body.stars) {
+		newHotel = req.body;
+		// insert new doc into the collection
+		collection.insertOne(newHotel, function(err, response) {
+			console.log(response.ops);	// .ops returns only part of the mongodb response
+			res
+				.status(201)
+				.json(response.ops); 
+		});
+	}
+	else {
+		console.log("Bad Request: request not in correct form!");
+		res
+			.status(401)
+			.json({ message : "Request not in correct form" });
+	}
 }
