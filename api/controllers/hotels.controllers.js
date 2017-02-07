@@ -1,8 +1,14 @@
 // because it is a json file, we can just require() it
 // Or, we have to require("file") and then open and read that file asyncly.
 var hotelData = require("../data/hotel-data.json");
+var dbconn = require('../data/dbconnection.js');
+
 
 module.exports.hotelsGetAll = function(req, res) {
+	// get the db from dbconnection
+	var db = dbconn.get();
+
+	console.log("db", db);
 	console.log("GET the hotels data");
 
 	// 'req.query' passes querystring into controllers
@@ -32,6 +38,11 @@ module.exports.hotelsGetAll = function(req, res) {
 };
 
 module.exports.hotelsGetOne = function(req, res) {
+	// get the db from dbconnection
+	var db = dbconn.get();
+
+	console.log("db", db);
+
 	var hotelID = req.params.hotelID;
 	var thisHotel = hotelData[hotelID];
 
@@ -42,6 +53,11 @@ module.exports.hotelsGetOne = function(req, res) {
 };
 
 module.exports.hotelsAddOne = function(req, res) {
+	// get the db from dbconnection
+	var db = dbconn.get();
+
+	console.log("db", db);
+
 	console.log("POST new hotel");
 	console.log(req.body);
 	res

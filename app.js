@@ -1,4 +1,4 @@
-//
+require('./api/data/dbconnection.js').open();
 var express = require('express');	// add express to app
 var app = express();
 var path = require('path');
