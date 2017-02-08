@@ -1,3 +1,5 @@
+// Connecting to MongoDB--meanhotel using native driver
+
 var MongoClient = require('mongodb').MongoClient;
 // connection string
 var dburl = 'mongodb://localhost:27017/meanhotel';
