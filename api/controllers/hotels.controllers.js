@@ -1,18 +1,23 @@
-// // because it is a json file, we can just require() it
+// // CHOICE1: because it is a json file, we can just require() it
 // // Or, we have to require("file") and then open and read that file asyncly.
 // var hotelData = require("../data/hotel-data.json");
 
-var dbconn = require('../data/dbconnection.js');
-var ObjectId = require('mongodb').ObjectId;
+// // CHOICE2: connect to Native MongoDB driver
+// var dbconn = require('../data/dbconnection.js');
+// var ObjectId = require('mongodb').ObjectId;
+
+// CHOICE3: use models provided by Mongoose
+var mongoose = require('mongoose');
+var Hotel = mongoose.model('Hotel');
 
 
 module.exports.hotelsGetAll = function(req, res) {
-	// get the db from dbconnection
-	var db = dbconn.get();
-	var collection = db.collection('hotels');
+	// // get the db from dbconnection
+	// var db = dbconn.get();
+	// var collection = db.collection('hotels');
 
-	console.log("Get db", db);
-	console.log("GET the hotels data");
+	// console.log("Get db", db);
+	// console.log("GET the hotels data");
 
 	// 'req.query' passes querystring into controllers
 	console.log(req.query);
@@ -32,38 +37,58 @@ module.exports.hotelsGetAll = function(req, res) {
 		count = parseInt(req.query.count, 10);
 	}
 
-	collection
-		.find()	// returns cursor obj which can yield json obj
+	Hotel
+		.find()
 		.skip(offset)
 		.limit(count)
-		// asynchronously convert the cursor obj to json array
-		.toArray(function (err, docs) {
+		.exec(function(err, hotels) {
+			console.log("Found hotels", hotels.length);
 			res
 				.status(200)
-				.json(docs);			
+				.json(hotels);
 		});
+
+	// collection
+	// 	.find()	// returns cursor obj which can yield json obj
+	// 	.skip(offset)
+	// 	.limit(count)
+	// 	// asynchronously convert the cursor obj to json array
+	// 	.toArray(function (err, docs) {
+	// 		res
+	// 			.status(200)
+	// 			.json(docs);			
+	// 	});
 };
 
 module.exports.hotelsGetOne = function(req, res) {
-	// get the db from dbconnection
-	var db = dbconn.get();
-	var collection = db.collection("hotels");
+	// // get the db from dbconnection
+	// var db = dbconn.get();
+	// var collection = db.collection("hotels");
 
-	console.log("Get db");
+	// console.log("Get db");
 
 	var hotelID = req.params.hotelID;
 
-	collection
-		// query for a single doc by its ObjectId asynchronously
-		.findOne({
-			_id : ObjectId(hotelID)
-		}, function (err, doc) {
+	Hotel
+		.findById(hotelID)	// helper method provided by Mongoose
+		.exec(function(err, doc) {
+			console.log("Found hotel", doc);
 			res
 				.status(200)
 				.json(doc);
 		});
 
-	var thisHotel = hotelData[hotelID];
+	// collection
+	// 	// query for a single doc by its ObjectId asynchronously
+	// 	.findOne({
+	// 		_id : ObjectId(hotelID)
+	// 	}, function (err, doc) {
+	// 		res
+	// 			.status(200)
+	// 			.json(doc);
+	// 	});
+
+	// var thisHotel = hotelData[hotelID];
 
 };
 
