@@ -3,8 +3,9 @@ var express = require("express");
 var router = express.Router();
 
 var ctrlHotels = require("../controllers/hotels.controllers.js");
+var ctrlReviews = require("../controllers/reviews.controllers.js");
 
-// chaining the method of the router
+// GET/POST hotels
 // 1. Get All Hotels
 router
 	.route('/hotels')
@@ -21,5 +22,17 @@ router
 router
 	.route('/hotels/new')
 	.post(ctrlHotels.hotelsAddOne);
+
+
+// GET/POST reviews
+// 1. Get all reviews for a hotel
+router
+	.route('/hotels/:hotelID/reviews')
+	.get(ctrlReviews.reviewsGetAll);
+
+// 2. Get a single review for a hotel
+router
+	.route('/hotels/:hotelID/reviews/:reviewId')
+	.get(ctrlReviews.reivewsGetOne);
 
 module.exports = router;	
