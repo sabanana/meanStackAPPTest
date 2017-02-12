@@ -10,6 +10,39 @@
 var mongoose = require('mongoose');
 var Hotel = mongoose.model('Hotel');
 
+// filtering hotels by geo info entered through url query params
+var runGeoQuery = function (req, res) {
+	var lng = parseFloat(req.query.lng);
+	var lat = parseFloat(req.query.lat);
+
+	// A geoJSON point
+	var point = {
+		type : "Point",
+		coordinates : [lng, lat]
+	};
+
+	// options for searching through geo info
+	var geoOptions = {
+		spherical : true,
+		maxDistance : 2000,
+		num : 5
+	};
+
+	Hotel
+		.geoNear(point, geoOptions, function(err, result, stats) {
+			console.log("Geo result:", result);
+			console.log("Geo stats:", stats);
+			if (err) {
+				console.log("Error", err);
+				res
+					.status(404);
+			}
+			res
+				.status(200)
+				.json(result);
+		});
+}
+
 
 module.exports.hotelsGetAll = function(req, res) {
 	// // get the db from dbconnection
@@ -25,6 +58,12 @@ module.exports.hotelsGetAll = function(req, res) {
 	// defaul offset and count for querying hotels
 	var offset = 0;
 	var count = 5;
+
+	// filter for querying through geo Info. e.g. "api/hotels?lng=47&lat=19"
+	if (req.query && req.query.lng && req.query.lat) {
+		runGeoQuery(req, res);
+		return;
+	}
 
 	// user defined offset and count passed in as url querystring
 	if (req.query && req.query.offset) {
