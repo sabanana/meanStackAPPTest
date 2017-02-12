@@ -20,14 +20,18 @@ module.exports.reviewsGetAll = function(req, res) {
 // Get one review for hotelID
 module.exports.reviewsGetOne = function(req, res) {
 	var hotelID = req.params.hotelID;
+	var reviewID = req.params.reviewID;
+
+	console.log("GET reviewID " + reviewID + "for hotelID " + hotelID);
 
 	Hotel
 		.findById(hotelID)
 		.select("reviews")	// Telling MongoDB to only return reivews, which saves bandwidth
-		.exec(function(err, doc) {
-			console.log("Returned doc", doc);
+		.exec(function(err, hotel) {
+			var review = hotel.reviews.id(reviewID);
+			console.log("Returned hotel", hotel);
 			res
 				.status(200)
-				.json(doc.reviews);
+				.json(review);
 		});
 };
