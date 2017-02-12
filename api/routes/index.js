@@ -32,7 +32,7 @@ router
 
 // 2. Get a single review for a hotel
 router
-	.route('/hotels/:hotelID/reviews/:reviewId')
+	.route('/hotels/:hotelID/reviews/:reviewID')
 	.get(ctrlReviews.reviewsGetOne);
 
 module.exports = router;	
