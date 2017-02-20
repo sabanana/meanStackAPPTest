@@ -15,6 +15,15 @@ var runGeoQuery = function (req, res) {
 	var lng = parseFloat(req.query.lng);
 	var lat = parseFloat(req.query.lat);
 
+	if (isNaN(lng) || isNaN(lat)) {
+		res
+			.status(400)	// 400 Bad Request
+			.json({
+				"message" : "If supplied querystring lng and lat must be numbers"
+			});
+		return;
+	}
+
 	// A geoJSON point
 	var point = {
 		type : "Point",
@@ -30,16 +39,20 @@ var runGeoQuery = function (req, res) {
 
 	Hotel
 		.geoNear(point, geoOptions, function(err, result, stats) {
-			console.log("Geo result:", result);
-			console.log("Geo stats:", stats);
 			if (err) {
-				console.log("Error", err);
+				console.log("Error finding hotels near input location:", err);
 				res
-					.status(404);
+					.status = 500
+					.json(err);
+				return;
 			}
-			res
-				.status(200)
-				.json(result);
+			else {
+				console.log("Geo result:", result);
+				console.log("Geo stats:", stats);
+				res
+					.status(200)
+					.json(result);
+			}
 		});
 }
 
@@ -58,6 +71,7 @@ module.exports.hotelsGetAll = function(req, res) {
 	// defaul offset and count for querying hotels
 	var offset = 0;
 	var count = 5;
+	var maxCount = 10;	// user input count shouldn't exceed maxCount
 
 	// filter for querying through geo Info. e.g. "api/hotels?lng=47&lat=19"
 	if (req.query && req.query.lng && req.query.lat) {
@@ -76,15 +90,41 @@ module.exports.hotelsGetAll = function(req, res) {
 		count = parseInt(req.query.count, 10);
 	}
 
+	if (isNaN(offset) || isNaN(count)) {
+		res
+			.status(400)	// 400 Bad Request
+			.json({
+				"message" : "If supplied querystring count and offset must be numbers"
+			});
+		return;
+	}
+
+	if (count > maxCount) {
+		res
+			.status(400)
+			.json({
+				"message" : "Count limit of " + maxCount + " exceeded!"
+			});
+		return;
+	}
+
 	Hotel
 		.find()
 		.skip(offset)
 		.limit(count)
 		.exec(function(err, hotels) {
-			console.log("Found hotels", hotels.length);
-			res
-				.status(200)
-				.json(hotels);
+			if (err) {
+				console.log("Error finding hotels:", err);
+				res
+					.status(500)
+					.json(err);
+			}
+			else {	
+				console.log("Found hotels", hotels.length);
+				res
+					.status(200)
+					.json(hotels);
+			}
 		});
 
 	// collection
@@ -111,10 +151,28 @@ module.exports.hotelsGetOne = function(req, res) {
 	Hotel
 		.findById(hotelID)	// helper method provided by Mongoose
 		.exec(function(err, doc) {
-			console.log("Found hotel", doc);
+			var response = {
+				status : 200,
+				message : doc 
+			};
+
+			if (err) {
+				response.status = 500;
+				response.message = err;
+			}
+			else if (!doc) {
+				response.status = 404;
+				response.message = {
+					"message" : "HotelID not found"
+				}
+			}
+			else {
+				console.log("Found hotel", doc);
+			}
+			
 			res
-				.status(200)
-				.json(doc);
+				.status(response.status)
+				.json(response.message);
 		});
 
 	// collection

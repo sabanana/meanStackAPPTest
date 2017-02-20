@@ -10,10 +10,28 @@ module.exports.reviewsGetAll = function(req, res) {
 		.findById(hotelID)
 		.select("reviews")	// Telling MongoDB to only return reivews, which saves bandwidth
 		.exec(function(err, doc) {
-			console.log("Returned doc", doc);
+			var response = {
+				status : 200,
+				message : doc.reviews 
+			};
+
+			if (err) {
+				response.status = 500;
+				response.message = err;
+			}
+			else if (!doc) {
+				response.status = 404;
+				response.message = {
+					"message" : "HotelID not found"
+				}
+			}
+			else {
+				console.log("Returned doc", doc);
+			}
+
 			res
-				.status(200)
-				.json(doc.reviews);
+				.status(response.status)
+				.json(response.message);			
 		});
 };
 
@@ -26,12 +44,31 @@ module.exports.reviewsGetOne = function(req, res) {
 
 	Hotel
 		.findById(hotelID)
-		.select("reviews")	// Telling MongoDB to only return reivews, which saves bandwidth
+		.select("reviews")	// Telling MongoDB to only return reviews, which saves bandwidth
 		.exec(function(err, hotel) {
-			var review = hotel.reviews.id(reviewID);
-			console.log("Returned hotel", hotel);
+			var response = {
+				status : 200,
+				message : hotel
+			};
+
+			if (err) {
+				response.status = 500;
+				response.message = err;
+			}
+			else if (!doc) {
+				response.status = 404;
+				response.message = {
+					"message" : "HotelID not found"
+				}
+			}
+			else {
+				console.log("Returned hotel", hotel);
+				var review = hotel.reviews.id(reviewID);
+				response.message = review;
+			}
+
 			res
-				.status(200)
-				.json(review);
+				.status(response.status)
+				.json(response.message);
 		});
 };
