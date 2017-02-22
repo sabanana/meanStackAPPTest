@@ -17,7 +17,8 @@ router
 // 2. Get a hotel by its ID
 router
 	.route('/hotels/:hotelID')
-	.get(ctrlHotels.hotelsGetOne);
+	.get(ctrlHotels.hotelsGetOne)
+	.put(ctrlHotels.hotelsUpdateOne);
 
 
 
@@ -31,6 +32,7 @@ router
 // 2. Get a single review for a hotel
 router
 	.route('/hotels/:hotelID/reviews/:reviewID')
-	.get(ctrlReviews.reviewsGetOne);
+	.get(ctrlReviews.reviewsGetOne)
+	.put(ctrlReviews.reviewsUpdateOne);
 
 module.exports = router;	
