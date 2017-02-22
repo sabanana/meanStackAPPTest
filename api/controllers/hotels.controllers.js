@@ -189,8 +189,51 @@ module.exports.hotelsGetOne = function(req, res) {
 
 };
 
+var _splitArray = function(input) {
+		var output;
+		if (input && input.length > 0) {
+			output = input.split(";");
+		}
+		else {
+			output = [];
+		}
+		return output;
+};
+
 module.exports.hotelsAddOne = function(req, res) {
-	// get the db from dbconnection
+	Hotel
+		.create({
+				name : req.body.name,
+				description : req.body.description,
+				stars : parseInt(req.body.stars),
+				services : _splitArray(req.body.services),
+				photos : _splitArray(req.body.photos),
+				currency : req.body.currency,
+				location : {
+					address : req.body.address,
+					coordinates : [
+					parseFloat(req.body.lng),
+					parseFloat(req.body.lat)
+					]
+				}
+			
+			}, function(err, hotel) {
+				if (err) {
+					console.log("Error creating hotel");
+					res
+						.status(400)
+						.json(err);
+				}
+				else {
+					console.log("Hotel created", hotel);
+					res
+						.status(201)
+						.json(hotel);
+				}
+			});
+
+
+/*	// get the db from dbconnection
 	var db = dbconn.get();
 	var collection = db.collection("hotels");
 
@@ -217,4 +260,5 @@ module.exports.hotelsAddOne = function(req, res) {
 			.status(401)
 			.json({ message : "Request not in correct form" });
 	}
+*/
 }
