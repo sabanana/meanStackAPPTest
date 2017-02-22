@@ -324,3 +324,23 @@ module.exports.hotelsUpdateOne = function(req, res) {
 			});
 		});
 };
+
+module.exports.hotelsDeleteOne = function(req, res) {
+	var hotelID = req.params.hotelID;
+
+	Hotel
+		.findByIdAndRemove(hotelID)
+		.exec(function(err, hotel) {
+			if (err) {
+				res
+					.status(404)
+					.json(err);
+			}
+			else {
+				console.log("Hotel Deleted, id:", hotelID);
+				res
+					.status(204)  // no content
+					.json();
+			}
+		});
+};
