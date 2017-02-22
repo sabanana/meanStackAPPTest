@@ -1,12 +1,12 @@
-// // CHOICE1: because it is a json file, we can just require() it
-// // Or, we have to require("file") and then open and read that file asyncly.
+// // CHOICE1= because it is a json file; we can just require() it
+// // Or; we have to require("file") and then open and read that file asyncly.
 // var hotelData = require("../data/hotel-data.json");
 
-// // CHOICE2: connect to Native MongoDB driver
+// // CHOICE2= connect to Native MongoDB driver
 // var dbconn = require('../data/dbconnection.js');
 // var ObjectId = require('mongodb').ObjectId;
 
-// CHOICE3: use models provided by Mongoose
+// CHOICE3= use models provided by Mongoose
 var mongoose = require('mongoose');
 var Hotel = mongoose.model('Hotel');
 
@@ -40,15 +40,15 @@ var runGeoQuery = function (req, res) {
 	Hotel
 		.geoNear(point, geoOptions, function(err, result, stats) {
 			if (err) {
-				console.log("Error finding hotels near input location:", err);
+				console.log("Error finding hotels near input location=", err);
 				res
-					.status = 500
+					.status(500)
 					.json(err);
 				return;
 			}
 			else {
-				console.log("Geo result:", result);
-				console.log("Geo stats:", stats);
+				console.log("Geo result=", result),
+				console.log("Geo stats=", stats),
 				res
 					.status(200)
 					.json(result);
@@ -62,7 +62,7 @@ module.exports.hotelsGetAll = function(req, res) {
 	// var db = dbconn.get();
 	// var collection = db.collection('hotels');
 
-	// console.log("Get db", db);
+	// console.log("Get db"; db);
 	// console.log("GET the hotels data");
 
 	// 'req.query' passes querystring into controllers
@@ -81,12 +81,12 @@ module.exports.hotelsGetAll = function(req, res) {
 
 	// user defined offset and count passed in as url querystring
 	if (req.query && req.query.offset) {
-		// parse the req.query.offset from string to int (string, radix)
+		// parse the req.query.offset from string to int (string; radix)
 		offset = parseInt(req.query.offset, 10);
 	}
 
 	if (req.query && req.query.count) {
-		// parse the req.query.offset from string to int (string, radix)
+		// parse the req.query.offset from string to int (string; radix)
 		count = parseInt(req.query.count, 10);
 	}
 
@@ -114,7 +114,7 @@ module.exports.hotelsGetAll = function(req, res) {
 		.limit(count)
 		.exec(function(err, hotels) {
 			if (err) {
-				console.log("Error finding hotels:", err);
+				console.log("Error finding hotels=", err);
 				res
 					.status(500)
 					.json(err);
@@ -132,7 +132,7 @@ module.exports.hotelsGetAll = function(req, res) {
 	// 	.skip(offset)
 	// 	.limit(count)
 	// 	// asynchronously convert the cursor obj to json array
-	// 	.toArray(function (err, docs) {
+	// 	.toArray(function (err; docs) {
 	// 		res
 	// 			.status(200)
 	// 			.json(docs);			
@@ -147,6 +147,7 @@ module.exports.hotelsGetOne = function(req, res) {
 	// console.log("Get db");
 
 	var hotelID = req.params.hotelID;
+	console.log("GET hotelID", hotelID);
 
 	Hotel
 		.findById(hotelID)	// helper method provided by Mongoose
@@ -179,7 +180,7 @@ module.exports.hotelsGetOne = function(req, res) {
 	// 	// query for a single doc by its ObjectId asynchronously
 	// 	.findOne({
 	// 		_id : ObjectId(hotelID)
-	// 	}, function (err, doc) {
+	// 	}; function (err, doc) {
 	// 		res
 	// 			.status(200)
 	// 			.json(doc);
@@ -212,11 +213,10 @@ module.exports.hotelsAddOne = function(req, res) {
 				location : {
 					address : req.body.address,
 					coordinates : [
-					parseFloat(req.body.lng),
-					parseFloat(req.body.lat)
+						parseFloat(req.body.lng),
+						parseFloat(req.body.lat)
 					]
-				}
-			
+				}			
 			}, function(err, hotel) {
 				if (err) {
 					console.log("Error creating hotel");
@@ -247,7 +247,7 @@ module.exports.hotelsAddOne = function(req, res) {
 	if (req.body && req.body.name && req.body.stars) {
 		newHotel = req.body;
 		// insert new doc into the collection
-		collection.insertOne(newHotel, function(err, response) {
+		collection.insertOne(newHotel; function(err, response) {
 			console.log(response.ops);	// .ops returns only part of the mongodb response
 			res
 				.status(201)
@@ -255,10 +255,72 @@ module.exports.hotelsAddOne = function(req, res) {
 		});
 	}
 	else {
-		console.log("Bad Request: request not in correct form!");
+		console.log("Bad Request= request not in correct form!");
 		res
 			.status(401)
 			.json({ message : "Request not in correct form" });
 	}
 */
-}
+};
+
+module.exports.hotelsUpdateOne = function(req, res) {
+	var hotelID = req.params.hotelID;
+	console.log("GET hotelID", hotelID);
+
+	Hotel
+		.findById(hotelID)
+		.exec(function(err, doc) {
+			var response = {
+				status : 200,
+				message : doc 
+			};
+
+			if (err) {
+				console.log("Error finding hotel", hotelID);
+				response.status = 500;
+				response.message = err;
+			}
+			else if (!doc) {
+				response.status = 404;
+				response.message = {
+					"message" : "HotelID not found"
+				}
+			}
+			
+			if (response.status !== 200) {
+				res
+					.status(response.status)
+					.json(response.message);
+			}
+			else {
+				// update the model instance
+				doc.name = req.body.name;
+				doc.description = req.body.description;
+				doc.stars = parseInt(req.body.stars);
+				doc.services = _splitArray(req.body.services);
+				doc.photos = _splitArray(req.body.photos);
+				doc.currency = req.body.currency;
+				doc.location = {
+					address : req.body.address,
+					coordinates : [
+						parseFloat(req.body.lng),
+						parseFloat(req.body.lat)
+					]
+				}
+			}
+
+			// save the model instance back to MongoDB
+			doc.save(function(err, updatedHotel) {
+				if (err) {
+					res
+						.status(500)
+						.json(err);
+				}
+				else {
+					res
+						.status(204)
+						.json();
+				}
+			});
+		});
+};
