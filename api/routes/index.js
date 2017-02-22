@@ -26,7 +26,7 @@ router
 router
 	.route('/hotels/:hotelID/reviews')
 	.get(ctrlReviews.reviewsGetAll)
-	.post(ctrlReviews.reviewAddOne);
+	.post(ctrlReviews.reviewsAddOne);
 
 // 2. Get a single review for a hotel
 router
