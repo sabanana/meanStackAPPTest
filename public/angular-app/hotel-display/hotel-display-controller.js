@@ -6,5 +6,10 @@ function HotelController($routeParams, hotelDataFactory) {
 
 	hotelDataFactory.hotelDisplay(id).then(function(res) {
 		vm.hotel = res;
+		vm.stars = _getStarRating(res.stars);
 	});
+}
+
+function _getStarRating(stars) {
+	return new Array(stars);
 }
