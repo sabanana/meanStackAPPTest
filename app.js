@@ -22,6 +22,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 // user body-parser middleware to parser HTML form data in req.body
 // 
 app.use(bodyParser.urlencoded({ extended : false }));
+app.use(bodyParser.json());	// angularJS submit form in json format by default
 
 app.use('/api', routes);
 
