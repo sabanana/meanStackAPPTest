@@ -11,7 +11,7 @@ var ctrlUsers = require("../controllers/users.controllers.js");
 router
 	.route('/hotels')
 	// GET method; callback controller
-	.get(ctrlHotels.hotelsGetAll)
+	.get(ctrlUsers.authenticate, ctrlHotels.hotelsGetAll)
 	// POST a new hotel
 	.post(ctrlHotels.hotelsAddOne);
 
