@@ -67,6 +67,7 @@ module.exports.hotelsGetAll = function(req, res) {
 
 	// 'req.query' passes querystring into controllers
 	console.log(req.query);
+	console.log("requested by user:", req.user);
 
 	// defaul offset and count for querying hotels
 	var offset = 0;
