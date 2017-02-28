@@ -4,6 +4,7 @@ var router = express.Router();
 
 var ctrlHotels = require("../controllers/hotels.controllers.js");
 var ctrlReviews = require("../controllers/reviews.controllers.js");
+var ctrlUsers = require("../controllers/users.controllers.js");
 
 // GET/POST hotels
 // 1. Get All Hotels OR Add One Hotel using POST method
@@ -36,5 +37,15 @@ router
 	.get(ctrlReviews.reviewsGetOne)
 	.put(ctrlReviews.reviewsUpdateOne)
 	.delete(ctrlReviews.reviewsDeleteOne);
+
+
+// Authentication
+router
+	.route('/users/register')
+	.post(ctrlUsers.register);
+
+router
+	.route('/users/login')
+	.post(ctrlUsers.login);
 
 module.exports = router;	
