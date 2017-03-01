@@ -29,7 +29,7 @@ router
 router
 	.route('/hotels/:hotelID/reviews')
 	.get(ctrlReviews.reviewsGetAll)
-	.post(ctrlReviews.reviewsAddOne);
+	.post(ctrlUsers.authenticate, ctrlReviews.reviewsAddOne);
 
 // 2. Get a single review for a hotel
 router
