@@ -18,6 +18,7 @@ app.use(function(req, res, next) {
 
 // build static html homepage
 app.use(express.static(path.join(__dirname, 'public')));
+app.use('/node_modules', express.static(path.join(__dirname, 'node_modules')));
 
 // user body-parser middleware to parser HTML form data in req.body
 // 
